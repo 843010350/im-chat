@@ -1,0 +1,91 @@
+server:
+  port: 9967
+
+spring:
+  application:
+    name: nettyConsumer
+  kafka:
+    bootstrap-servers: 192.168.4.22:9092
+    #bootstrap-servers: 192.168.0.101:9092
+    producer:
+      retries: 3
+      batch-size: 16384
+      buffer-memory: 33554432
+      acks: 1
+      key-serializer:  org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: wwm
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      ack-mode: manual_immediate
+
+
+
+  datasource:
+    username: root
+    password: 12345678
+    url: jdbc:mysql://localhost:3306/netty_chat?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  redis:
+    # Redis服务器地址
+    host: 192.168.4.22
+    #host: 192.168.0.101
+    # Redis服务器端口号
+    port: 6379
+    # 使用的数据库索引，默认是0
+    database: 0
+    # 连接超时时间
+    timeout: 1800000
+    # 设置密码
+    #password: "123456"
+    lettuce:
+      pool:
+        # 最大阻塞等待时间，负数表示没有限制
+        max-wait: -1
+        # 连接池中的最大空闲连接
+        max-idle: 5
+        # 连接池中的最小空闲连接
+        min-idle: 0
+        # 连接池中最大连接数，负数表示没有限制
+        max-active: 20
+
+
+
+curator:
+  #重试retryCount次，当会话超时出现后，curator会每间隔elapsedTimeMs毫秒时间重试一次，共重试retryCount次。
+  retryCount: 5
+  elapsedTimeMs: 5000
+  #服务器信息
+  connectString: 192.168.4.22:2181
+  #connectString: 192.168.0.101:2181
+  #会话超时时间设置
+  sessionTimeoutMs: 60000
+  #连接超时时间
+  connectionTimeoutMs: 5000
+
+
+
+mybatis-plus:
+  configuration:
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-column-underline: true  #???????
+    capital-mode: true    #??????????
+    refresh-mapper: true  #??mapper ????
+    db-config:
+      update-strategy: not_null
+  mapper-locations: classpath*:/mapper/*Mapper.xml,classpath*:/mapper/**/*Mapper.xml
+  type-aliases-package: com.wwm.nettycommon.entity
+
+
+
+

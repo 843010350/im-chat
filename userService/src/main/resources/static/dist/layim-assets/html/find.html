@@ -1,0 +1,184 @@
+ 
+ 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>发现</title>
+
+<link rel="stylesheet" href="/layui/css/layui.css">
+<style>
+
+</style>
+</head>
+<body>
+
+<div style="margin: 15px;">
+<!--
+  <blockquote class="layui-elem-quote">此为自定义的【查找】页面，因需求不一，所以官方暂不提供该模版结构与样式，实际使用时，可移至该文件到你的项目中，对页面自行把控。
+  <br>文件所在目录（相对于layui.js）：/layim-assets/html/find.html</blockquote>
+-->
+
+  <form class="layui-form layui-form-pane" action="">
+    <div class="layui-form-item">
+      <label class="layui-form-label">搜索下拉</label>
+      <div class="layui-input-block">
+        <input type="text" name="groupName" id="groupName" class="layui-input"
+               placeholder="搜索" style="position:absolute;z-index:2;width:88%;" value="" autocomplete="off">
+        <select  id="orgname" placeholder="请输入名称搜索" name="orgname" lay-verify="required" lay-filter="orgname" >
+          <option value="">请输入名称搜索</option>
+        </select>
+        <div id="btn-div" hidden="hidden">
+        <button type="button"  onclick="clickBtn()" id="btn-add" class="layui-btn layui-btn-normal">添加好友</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="layui-row" id="tc-msg" style="display:none;">
+      头像：<img src="" id = "tc-img" class="layui-circle layim-msgbox-avatar">
+      <p class="layim-msgbox-user">
+        用户:<span id="tc-username"></span>
+      </p>
+      <p>
+       添加时间: <span id="tc-time"></span>
+      </p>
+     <p>附言:<input id="tc-input"/> </p>
+      </p>
+    </div>
+  </form>
+
+
+</div>
+
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.0.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+/*  function clickBtn(){
+    var id = $("#orgname").val();
+    let t = listOption[id];
+    console.log(t)
+    tcmsg(t)
+  }*/
+
+  function tcmsg(data){
+    var img = document.getElementsByTagName("img")[0];
+    img.setAttribute("src",data.avatar);
+    document.getElementById("tc-username").textContent=data.username;
+    document.getElementById("tc-friends").textContent="好友";
+    document.getElementById("tc-time").textContent= new Date().toLocaleString();
+   /* $("#tc-username").val(data.username)
+    $("#tc-friends").val("好友")
+    $("#tc-id").val(data.id)*/
+    layer.open({
+      //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+      type:1,
+      title: '用户信息',
+      area: ['85%','80%'],
+      content:$("#tc-msg").html()
+    });
+  }
+
+  // 模拟请求返回数据
+  function getData(){
+    return new Promise(resolve=>{
+      let arr=[]
+      for(let i=0;i<10;i++){
+        let obj={}
+        obj.value=String(i);
+        obj.text="成都市第"+i+"人民医院"
+        arr.push(obj)
+      }
+      resolve(arr)
+    })
+  }
+
+let listOption=[];
+  function getViewData(viewData){
+    listOption = viewData;
+    let arr=[];
+    for(let i=0;i<viewData.length;i++){
+      let data = viewData[i];
+      let obj={}
+      obj.value=i;
+      obj.text=data.username;
+      arr.push(obj)
+    }
+    return arr;
+  }
+
+  // 用于缓存下拉获取的数据
+  let dropData
+
+  // 渲染下拉框的数据
+  function innitSelect(name,data){
+    let html=''
+    if(data&&data instanceof Array){
+      data.forEach(item=>{
+        html+="<option value="+item.value+">"+item.text+"</option>"
+      })
+    };
+    $(name).html(html)
+  }
+
+  $("#groupName").on("keyup",async function(e){
+    $("#btn-div").attr("hidden",true);
+    // 点击enter实现搜索功能
+    if(e.which=='13'){
+      console.log("点击了enter",$(this).val())
+      var groupName = $(this).val();
+      $.ajax({
+        type: 'POST',
+        url: "http://192.168.4.22:9986/api/user/queryByName?groupName="+groupName,
+        headers:{token: sessionStorage.getItem("token")},
+        success: success,
+        dataType: "json"
+      });
+      //ajax请求后台
+      // 模拟请求获取下拉菜单所需的参数
+ /*     dropData=await getData()
+      console.log("下拉菜单的数据：",dropData)
+      // 将获取回来的数据渲染给下拉菜单
+      innitSelect("#orgname",dropData)
+      let form = layui.form;
+      form.render()
+      // 将下拉框展开
+      $(".layui-form-select").addClass("layui-form-selected")*/
+    }
+  })
+
+  function success(data){
+    if(data.code === 0){
+      var viewData = data.data;
+      var selectList =  getViewData(viewData);
+      innitSelect("#orgname",selectList);
+      let form = layui.form;
+      form.render()
+      // 将下拉框展开
+      $(".layui-form-select").addClass("layui-form-selected")
+    }else {
+      layer.msg("查找用户异常")
+    }
+
+  }
+
+
+
+  layui.use(['form'], function(){
+    form = layui.form;
+
+    // 监听下拉框改变事件,修改输入框中的内容
+    form.on("select(orgname)",function(data){
+      $("#btn-div").attr("hidden",false);
+      let value=data.value
+      let selectObj=dropData.filter(item=>{
+        return item.value==value
+      })
+      $("#groupName").val(selectObj[0].text);
+    })
+  });
+</script>
+</body>
+</html>

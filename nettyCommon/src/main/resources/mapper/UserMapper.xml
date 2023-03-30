@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwm.nettycommon.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wwm.nettycommon.entity.User">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="email" property="email" />
+        <result column="avatar" property="avatar" />
+        <result column="status" property="status" />
+        <result column="sign" property="sign" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="queryFriendMap" extends="BaseResultMap" type="com.wwm.nettycommon.dto.UserViewDto">
+        <result column="group_id" property="groupId" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, username, password, email, avatar,status,sign,create_time,update_time
+    </sql>
+    <select id="queryFriends" parameterType="java.lang.Integer" resultMap="queryFriendMap">
+        select u.*,f.group_id from im_user u left join im_friends f on u.id = f.friend_id
+        where f.user_id = #{userId}
+    </select>
+
+
+
+
+
+</mapper>

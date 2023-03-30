@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwm.nettycommon.mapper.MsgContentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wwm.nettycommon.entity.MsgContent">
+        <id column="mid" property="mid" />
+        <result column="content" property="content" />
+        <result column="sender_id" property="senderId" />
+        <result column="recipient_id" property="recipientId" />
+        <result column="msg_type" property="msgType" />
+        <result column="is_received" property="isReceived" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mid, content, sender_id, recipient_id, msg_type, is_received, create_time
+    </sql>
+
+</mapper>

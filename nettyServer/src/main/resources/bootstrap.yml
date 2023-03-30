@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    nacos:
+      # nacos用户名
+      #username: nacos
+      # nacos用户密码
+     # password: nacos
+      # nacos服务器地址
+      discovery:
+        server-addr: 192.168.4.22:8848
+        #server-addr: 192.168.0.101:8848
+        namespace: 329004a5-8e62-427b-926b-5f1106b004fd
+#      config:
+#        username: nacos
+#        # nacos用户密码
+#        password: nacos
+#        prefix: ahs-user
+#        server-addr: 192.168.0.101:8848
+#        file-extension: yaml
+#        #group: DEFAULT_GROUP
+#        #namespace: 329004a5-8e62-427b-926b-5f1106b004fd
+#        namespace: 329004a5-8e62-427b-926b-5f1106b004fd
+
+
